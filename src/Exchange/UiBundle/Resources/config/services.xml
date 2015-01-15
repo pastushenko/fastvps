@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="data_life_by_user_update_request">10</parameter>
+        <parameter key="eur.int_code">978</parameter>
+        <parameter key="eur.code">EUR</parameter>
+        <parameter key="usd.int_code">840</parameter>
+        <parameter key="usd.code">USD</parameter>
+        <parameter key="uah.int_code">980</parameter>
+        <parameter key="uah.code">UAH</parameter>
+        <parameter key="byr.int_code">974</parameter>
+        <parameter key="byr.code">BYR</parameter>
+        <parameter key="huf.int_code">348</parameter>
+        <parameter key="huf.code">HUF</parameter>
+        <parameter key="kzt.int_code">398</parameter>
+        <parameter key="kzt.code">KZT</parameter>
+        <parameter key="cad.int_code">124</parameter>
+        <parameter key="cad.code">CAD</parameter>
+        <parameter key="nok.int_code">578</parameter>
+        <parameter key="nok.code">NOK</parameter>
+    </parameters>
+
+    <services>
+
+        <service id="uiBundle.available_rates" class="Exchange\UtilsBundle\Entity\RatesCollection">
+            <call method="addRateCode">
+                <argument>%eur.int_code%</argument>
+                <argument>%eur.code%</argument>
+                <argument>1</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%usd.int_code%</argument>
+                <argument>%usd.code%</argument>
+                <argument>1</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%uah.int_code%</argument>
+                <argument>%uah.code%</argument>
+                <argument>1</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%byr.int_code%</argument>
+                <argument>%byr.code%</argument>
+                <argument>1</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%huf.int_code%</argument>
+                <argument>%huf.code%</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%kzt.int_code%</argument>
+                <argument>%kzt.code%</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%cad.int_code%</argument>
+                <argument>%cad.code%</argument>
+            </call>
+            <call method="addRateCode">
+                <argument>%nok.int_code%</argument>
+                <argument>%nok.code%</argument>
+            </call>
+        </service>
+
+        <service id="rates_updater_service" class="Exchange\UtilsBundle\Service\RatesUpdaterService">
+            <argument type="service" id="uiBundle.rate.repository" />
+            <argument type="service"  id="rates_fetcher_service" />
+            <argument>%data_life_by_user_update_request%</argument>
+        </service>
+
+        <service id="uiBundle.home.controller" class="Exchange\UiBundle\Controller\HomeController">
+            <argument type="service" id="uiBundle.rate.repository" />
+            <argument type="service" id="rates_updater_service" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="uiBundle.rates_api.controller" class="Exchange\UiBundle\Controller\RatesApiController">
+            <argument type="service" id="uiBundle.rate.repository" />
+            <argument type="service" id="rates_updater_service" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="uiBundle.rate.repository"
+            class="Exchange\UiBundle\Repository\RateRepository"
+            factory-service="doctrine.orm.default_entity_manager"
+            factory-method="getRepository">
+            <argument>Exchange\UiBundle\Entity\Rate</argument>
+            <call method="setAvailableRates">
+                <argument type="service" id="uiBundle.available_rates" />
+            </call>
+        </service>
+
+    </services>
+</container>

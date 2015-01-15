@@ -1,0 +1,117 @@
+{% extends 'ExchangeUiBundle::layout.html.twig' %}
+
+{% block content %}
+    <h1>Курсы валют</h1>
+    <table class="col-lg-12">
+        <thead>
+            <tr>
+                <th>Int Code</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Count</th>
+                <th>Rate</th>
+                <th>Last updated (UTC)</th>
+            </tr>
+        </thead>
+            <tr class="rate-row-template">
+                <td class="currency-int-code">23</td>
+                <td class="currency-code"></td>
+                <td class="currency-name"></td>
+                <td class="currency-count"></td>
+                <td class="currency-rate"></td>
+                <td class="currency-created"></td>
+            </tr>
+            <tbody id="rates-table-body">
+            {% for rate in rates %}
+                <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                    <td class="currency-int-code">{{ rate.currencyIntCode }}</td>
+                    <td class="currency-code">{{ rate.currencyCode }}</td>
+                    <td class="currency-name">{{ rate.currencyName }}</td>
+                    <td class="currency-count">{{ rate.count }}</td>
+                    <td class="currency-rate">{{ rate.rate }}</td>
+                    <td class="currency-created">{{ rate.created|date("d-m-Y H:i:s") }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+    <div class="col-lg-12 top-offset"></div>
+    <div class="col-lg-6">
+        <h2>Разрешенные коды валют:</h2>
+        <ul>
+            {% for rate in availableRates %}
+                <li><strong>{{ rate.currencyIntCode }}</strong> - {{ rate.currencyCode }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-lg-6">
+        <h2>Управление валютами:</h2>
+        <form id="rates-control">
+            <label for="showRates">Показываемые валюты:</label>
+            <textarea id="showRates" name="showRates" rows="4">{{ defaultRateIntCodes|join("\n") }}</textarea>
+            <button class="local-update btn btn-primary">Обновить из локальной БД</button>
+            <button class="remote-update btn btn-primary">Обновить из удаленного сервера</button>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".local-update").click(function() {
+                var url = "{{ path('api_get_rates') }}";
+                showNewRates(url);
+
+                return false;
+            });
+
+            $(".remote-update").click(function() {
+                var url = "{{ path('api_update_rates') }}";
+                showNewRates(url);
+
+                return false;
+            });
+        });
+
+        function showNewRates(url)
+        {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: url,
+                data: $('#rates-control').serialize()
+            }).done(function( response ) {
+                if (response.status == 1) {
+                    var rateRows = generateRatesTableRows(response.rates);
+                    console.log(rateRows);
+                    $("#rates-table-body").empty().append(rateRows);
+                }
+                alert(response.message);
+            });
+        }
+
+        function generateRatesTableRows(rates)
+        {
+            var rateRows = [];
+            var counter = 0;
+            for (var rateId in rates) {
+                var rate = rates[rateId];
+                var rateRow = $(".rate-row-template").clone();
+                rateRow.removeClass("rate-row-template");
+
+                if (counter % 2 == 0) {
+                    rateRow.addClass("odd");
+                }
+
+                rateRow.find('.currency-int-code').text(rate.currencyIntCode);
+                rateRow.find('.currency-code').text(rate.currencyCode);
+                rateRow.find('.currency-name').text(rate.currencyName);
+                rateRow.find('.currency-count').text(rate.count);
+                rateRow.find('.currency-rate').text(rate.rate);
+                rateRow.find('.currency-created').text(rate.created);
+
+                rateRows[counter] = rateRow;
+                counter++;
+            }
+
+            return rateRows;
+        }
+    </script>
+{% endblock %}

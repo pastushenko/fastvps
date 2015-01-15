@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="remote_rates_url">http://www.cbr.ru/scripts/XML_daily.asp?date_req=%s</parameter>
+        <parameter key="data_life">86400</parameter>
+    </parameters>
+
+    <services>
+        <service id="rates_updater_service_for_cron" class="Exchange\UtilsBundle\Service\RatesUpdaterService">
+            <argument type="service" id="uiBundle.rate.repository" />
+            <argument type="service"  id="rates_fetcher_service" />
+            <argument>%data_life%</argument>
+        </service>
+
+        <service id="rates_fetcher_service" class="Exchange\UtilsBundle\Service\RatesFetcherService">
+            <argument>%remote_rates_url%</argument>
+        </service>
+    </services>
+</container>

@@ -1,0 +1,2 @@
+ExchangeUiBundle:
+    resource: "@ExchangeUiBundle/Resources/config/routing.yml"

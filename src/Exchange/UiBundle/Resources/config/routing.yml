@@ -1,0 +1,9 @@
+_home:
+    pattern:  /
+    defaults: { _controller: uiBundle.home.controller:indexAction }
+api_update_rates:
+    pattern:  /api/v1/rates/update
+    defaults: { _controller: uiBundle.rates_api.controller:updateAction }
+api_get_rates:
+    pattern:  /api/v1/rates/get
+    defaults: { _controller: uiBundle.rates_api.controller:getAction }

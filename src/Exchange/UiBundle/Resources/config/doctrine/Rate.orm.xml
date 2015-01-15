@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Exchange\UiBundle\Entity\Rate" table="rate" repository-class="Exchange\UiBundle\Repository\RateRepository">
+        <id name="currencyIntCode" type="integer" column="currency_int_code" />
+        <field name="currencyCode" type="text" column="currency_code" length="3" nullable="false"/>
+        <field name="currencyName" type="text" column="currency_name" length="100" nullable="false"/>
+        <field name="rate" type="float" column="rate" nullable="false"/>
+        <field name="count" type="integer" column="count" nullable="false"/>
+        <field name="created" type="datetime" column="created" nullable="false"/>
+    </entity>
+</doctrine-mapping>
