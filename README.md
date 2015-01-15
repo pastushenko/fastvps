@@ -3,9 +3,10 @@
 ##Руководство по установке:
 Для работы приложения необходимы php 5.4 и драйвер php-mysql.
 Также необходимо установить mysql.
-Необходимо создать пользователя и бд (тип хранилища InnoDB) в соответсвии с описанными параметрами в <code>app/config/parameters.yml</code>.
+Необходимо создать пользователя и бд (тип хранилища InnoDB).
 * Сперва склонируйте к себе проект: <code>git clone https://github.com/pastushenko/fastvps.git</code>
 * Выполните composer: <code>php composer.phar install</code>
+* Укажите настроки бд.
 * Выполните команду генерирующею схему бд: <code>./app/console doctrine:schema:create</code>
 * Для запуска веб сервера используйте комманду: <code>./app/console server:run</code>
 
